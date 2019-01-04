@@ -1,0 +1,86 @@
+Title: R Project
+"
+
+"
+    "# Project 2 - ",
+    "",
+    "Team Members:",
+    "    * Phyllis Summers",
+    "    * Aparna Srikanti",
+    "    * Helen Wu",
+    "    ",
+    "    ",
+    "Purpose:",
+    "",
+    "    Using a Kaggle Dataset (https://www.kaggle.com/jrosenblum123/visualizations-and-predicting-student-test-scores) on ",
+    "    Student Performance perform:",
+    "    ",
+    "    * Data Exploration",
+    "    * Data Visualization leveraging R",
+    "    * Identify regression between different points of data",
+    "    * Identify if dependencies/correlation exist between different points of data",
+    "    ",
+    "    The Kaggle Dataset contains marks secured by the students in high school.  Students are from the United States.  ",
+    "    There are 1000 sample records."
+   ]
+"
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Load dataset and packages
+```{r,warning=FALSE,message=FALSE}
+### Load necessary packages
+library(tidyverse)
+library(dplyr)
+library(psych)
+library(relaimpo)
+library(ggplot2)
+library(ggthemes)
+library(randomForest)
+library(caTools)
+library(miscTools)
+library(rmarkdown)
+library(pastecs)
+library(Rmisc)
+library(vioplot)
+library(scatterplot3d)
+library(caret)
+
+library(RColorBrewer)
+library(beeswarm)
+```
+
+```{r,warning=FALSE,message=FALSE}
+# Read in dataset
+students <- read.csv("StudentsPerformance.csv",h=T)
+
+```
+
+# Dataset Structure & summary
+```{r,warning=FALSE,message=FALSE}
+# Summary statistics
+#str(students)
+summary(students)
+```
+
+# Relationship of Test Scores with other key variables
+The educational level of parents plays a significant role in a student's performance. 
+
+# Key Drivers of Student performance By Shapley Value correlation using the `relaimpo` package.
+
+
+```{r,warning=FALSE,message=FALSE eval=FALSE, include=FALSE}
+# Regression
+lm(math.score~.,students %>% dplyr::select(-writing.score,-reading.score)) %>% summary()
+(calc.relimp(lm(math.score~.,students  %>% dplyr::select(-writing.score,-reading.score))))$lmg
+(calc.relimp(lm(math.score~.,students  %>% dplyr::select(-writing.score,-reading.score))))$lmg %>% data.frame() %>% add_rownames(.,var = "variable") %>% ggplot(.,aes(variable,.,fill=variable)) + geom_bar(stat = "identity") + theme_fivethirtyeight() + theme(legend.title = element_blank())
+
+lm(reading.score~.,students %>% dplyr::select(-writing.score,-math.score)) %>% summary()
+(calc.relimp(lm(reading.score~.,students  %>% dplyr::select(-writing.score,-math.score))))$lmg %>% data.frame() %>% add_rownames(.,var = "variable") %>% ggplot(.,aes(variable,.,fill=variable)) + geom_bar(stat = "identity") + theme_fivethirtyeight() + theme(legend.title = element_blank())
+
+lm(writing.score~.,students  %>% dplyr::select(-math.score,-reading.score)) %>% summary()
+(calc.relimp(lm(writing.score~.,students  %>% dplyr::select(-math.score,-reading.score))))$lmg %>% data.frame() %>% add_rownames(.,var = "variable") %>% ggplot(.,aes(variable,.,fill=variable)) + geom_bar(stat = "identity") + theme_fivethirtyeight() + theme(legend.title = element_blank())
+```
